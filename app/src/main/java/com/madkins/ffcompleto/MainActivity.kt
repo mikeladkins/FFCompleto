@@ -1,30 +1,36 @@
 package com.madkins.ffcompleto
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ImageView
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import com.madkins.ffcompleto.api.XIVServiceProvider
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import com.madkins.ffcompleto.ui.SearchPlayerViewModel
-import com.squareup.picasso.Picasso
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<SearchPlayerViewModel>()
-    lateinit var avatarImage: ImageView
+    private var name = "name"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        avatarImage = findViewById(R.id.avatar_image)
-
         viewModel.fetchPlayerById(18606659)
-
         viewModel.playerLiveData.observe(
             this,
             { player ->
                 println("Character: ${player.character.name}")
-                Picasso.get().load(player.character.avatarUrl).into(avatarImage)
+                name = player.character.name
             }
         )
+
+        setContent {
+            TitleText(name)
+        }
     }
+
+}
+
+@Composable
+fun TitleText(name: String) {
+    Text(text = "Hello $name")
 }
